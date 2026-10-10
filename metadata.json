@@ -1,0 +1,6 @@
+{
+  "name": "Vortex UC - International PUBG Mobile UC Store",
+  "description": "Premier international PUBG Mobile UC top-up service supporting Pakistan (PKR), United Kingdom (GBP), and United States (USD) with instant order verification, secure checkout, and full admin management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

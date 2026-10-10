@@ -1,0 +1,148 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "PUBG Mobile UC package for sale",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "ucAmount": { "type": "number" },
+        "bonusUc": { "type": "number" },
+        "image": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["active", "disabled"] },
+        "isPromo": { "type": "boolean" },
+        "prices": { "type": "object" },
+        "promoPrices": { "type": "object" },
+        "sortOrder": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "ucAmount", "status", "prices"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer UC Top-up order",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string", "maxLength": 32, "pattern": "^[A-Z0-9-]+$" },
+        "playerId": { "type": "string", "minLength": 5, "maxLength": 20, "pattern": "^[0-9]+$" },
+        "playerNickname": { "type": "string", "maxLength": 60 },
+        "productId": { "type": "string", "maxLength": 128 },
+        "productName": { "type": "string", "maxLength": 100 },
+        "ucAmount": { "type": "number" },
+        "bonusUc": { "type": "number" },
+        "country": { "type": "string", "enum": ["PK", "GB", "US"] },
+        "currency": { "type": "string", "enum": ["PKR", "GBP", "USD"] },
+        "amount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["card", "manual"] },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Awaiting Payment",
+            "Payment Submitted",
+            "Pending Verification",
+            "Payment Confirmed",
+            "Processing",
+            "Delivered",
+            "Rejected",
+            "Refunded"
+          ]
+        },
+        "customerEmail": { "type": "string", "maxLength": 120 },
+        "customerPhone": { "type": "string", "maxLength": 40 },
+        "adminNote": { "type": "string", "maxLength": 500 },
+        "rejectionReason": { "type": "string", "maxLength": 500 },
+        "deliveryConfirmedAt": { "type": "string" },
+        "deliveredBy": { "type": "string", "maxLength": 120 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["orderNumber", "playerId", "productId", "ucAmount", "country", "currency", "amount", "paymentMethod", "status"]
+    },
+    "PaymentSubmission": {
+      "title": "PaymentSubmission",
+      "description": "Customer manual payment receipt and reference submission",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string", "maxLength": 32, "pattern": "^[A-Z0-9-]+$" },
+        "payerName": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "transactionId": { "type": "string", "minLength": 4, "maxLength": 100 },
+        "amount": { "type": "number" },
+        "currency": { "type": "string", "enum": ["PKR", "GBP", "USD"] },
+        "receiptUrl": { "type": "string", "maxLength": 1000000 },
+        "paymentNote": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "verifiedBy": { "type": "string", "maxLength": 120 },
+        "verifiedAt": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["orderNumber", "payerName", "transactionId", "amount", "currency", "status"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized store administrator record",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 120 },
+        "role": { "type": "string", "enum": ["superadmin", "admin"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    },
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Global store settings and payment instructions",
+      "type": "object",
+      "properties": {
+        "storeName": { "type": "string", "maxLength": 100 },
+        "supportEmail": { "type": "string", "maxLength": 120 },
+        "supportWhatsapp": { "type": "string", "maxLength": 40 },
+        "announcement": { "type": "string", "maxLength": 300 },
+        "paymentInstructions": { "type": "object" },
+        "gatewayConfig": { "type": "object" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Administrative actions audit log",
+      "type": "object",
+      "properties": {
+        "action": { "type": "string", "maxLength": 100 },
+        "performedBy": { "type": "string", "maxLength": 120 },
+        "orderNumber": { "type": "string", "maxLength": 32 },
+        "details": { "type": "string", "maxLength": 1000 },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["action", "performedBy", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "PUBG Mobile UC package catalog"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Customer order records"
+    },
+    "/paymentSubmissions/{submissionId}": {
+      "schema": { "$ref": "#/entities/PaymentSubmission" },
+      "description": "Manual payment receipts and transaction records"
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/Admin" },
+      "description": "Authorized administrators"
+    },
+    "/siteSettings/{settingId}": {
+      "schema": { "$ref": "#/entities/SiteSettings" },
+      "description": "Global site configurations"
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Audit trails for administrator actions"
+    }
+  }
+}
